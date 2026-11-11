@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+
 typedef struct question
 {
     char question[200];
@@ -9,6 +10,9 @@ typedef struct question
     char optd[20];
     char answer;
 } question;
+void startque(void);
+void displayque(question que[], int total);
+void playgame(char name[], int difficulty);
 question easy[5] =
     {
         {"Which planet is known as the Red Planet?",
@@ -45,84 +49,81 @@ question easy[5] =
          "Seven",
          "Eight",
          'B'}};
-void displayque(question que[], int total)
-{
-    int i;
-    int correct = 0;
-    char ans;
-    char a,b,c,d,A,B,C,D;
-    for (i = 0; i < total; i++)
-        
-        {
-           do {
-                
 
-                printf("\n================================\n");
-                printf("Question %d/%d\n", i + 1, total);
-                printf("================================\n");
-
-                printf("%s\n\n", que[i].question);
-
-                printf("A. %s\n", que[i].opta);
-                printf("B. %s\n", que[i].optb);
-                printf("C. %s\n", que[i].optc);
-                printf("D. %s\n\n", que[i].optd);
-                printf("enter answer : ");
-                scanf(" %c", &ans);
-
-                if ((ans >= 'a' && ans <= 'd') || (ans >= 'A' && ans <= 'D'))
-                {
-                    if (ans >= 'a' && ans <= 'z')
-                    {
-                        ans = ans - 32;
-                    }
-                    if (que[i].answer == ans)
-                    {
-                        printf("Correct answer\n");
-                        correct++;
-                    }
-                    else
-                    {
-                        printf("Wrong answer\n");
-                        printf("The correct answer will be : %c\n\n", que[i].answer);
-                    }
-                }
-                else
-                {
-                    printf("enter a valid choice\n");
-                }
-            }
-           while (ans != 'A' && ans != 'B' && ans != 'C' && ans != 'D');
-            
-        }
-    printf("Your score is : %d/%d\n", correct, total);
-    printf("%f percent accuracy\n\n", (float)(correct / total) * 100);
-    printf("Thanks for playing\n\n");
-}
-void playgame(char name[], int difficulty)
-{
-    printf("================================\n           QUIZ MASTER            \n================================\n\n");
-
-    printf("Player : %s\n", name);
-    switch (difficulty)
+question medium[5] =
     {
-    case 1:
-        printf("Difficulty: Easy\n\n");
-        break;
+        {"Who invented the C language?",
+         "James Gosling",
+         "Dennis Ritchie",
+         "Bjarne Stroustrup",
+         "Ken Thompson",
+         'B'},
 
-    case 2:
-        printf("Difficulty: Medium\n\n");
-        break;
+        {"Which is the correct extension for C files?",
+         ".cpp",
+         ".java",
+         ".c",
+         ".py",
+         'C'},
 
-    case 3:
-        printf("Difficulty: Hard\n\n");
-        break;
-    }
+        {"How many bits are in one byte?",
+         "4",
+         "8",
+         "16",
+         "32",
+         'B'},
+
+        {"Which operator gives the remainder?",
+         "/",
+         "*",
+         "%",
+         "//",
+         'C'},
+
+        {"Which loop executes at least once?",
+         "For loop",
+         "While loop",
+         "Do while",
+         "Nested loop",
+         'C'}};
+
+question hard[5] =
     {
-        printf("================================\n           QUIZ STARTING           \n================================\n\n");
-    }
-    displayque(easy, 5);
-}
+        {"What is the time complexity of binary search?",
+         "O(n)",
+         "O(log n)",
+         "O(n^2)",
+         "O(1)",
+         'B'},
+
+        {"Which data structure uses LIFO?",
+         "Queue",
+         "Tree",
+         "Stack",
+         "Graph",
+         'C'},
+
+        {"What is the value of 2^10?",
+         "512",
+         "1000",
+         "2048",
+         "1024",
+         'D'},
+
+        {"Which sorting algorithm is stable?",
+         "Selection",
+         "Bubble",
+         "Quick",
+         "Heap",
+         'B'},
+
+        {"Which is not a programming paradigm?",
+         "Procedural",
+         "Functional",
+         "Object-based",
+         "Compilation",
+         'D'}};
+
 void startquiz()
 {
     char playername[50];
@@ -157,6 +158,106 @@ void startquiz()
 
     default:
         printf("Invalid difficulty choice!");
+        break;
+    }
+}
+void displayque(question que[], int total)
+{
+    int i, n;
+    int correct = 0;
+    int score = 0;
+    char ans;
+    for (i = 0; i < total; i++)
+
+    {
+        do
+        {
+
+            printf("\n================================\n");
+            printf("Question %d/%d\n", i + 1, total);
+            printf("================================\n");
+
+            printf("%s\n\n", que[i].question);
+
+            printf("A. %s\n", que[i].opta);
+            printf("B. %s\n", que[i].optb);
+            printf("C. %s\n", que[i].optc);
+            printf("D. %s\n\n", que[i].optd);
+            printf("enter answer : ");
+            scanf(" %c", &ans);
+
+            if ((ans >= 'a' && ans <= 'd') || (ans >= 'A' && ans <= 'D'))
+            {
+                if (ans >= 'a' && ans <= 'z')
+                {
+                    ans = ans - 32;
+                }
+                if (que[i].answer == ans)
+                {
+                    printf("Correct answer\n");
+                    correct++;
+                    score += 10;
+                }
+                else
+                {
+                    printf("Wrong answer\n");
+                    printf("The correct answer will be : %c\n\n", que[i].answer);
+                }
+            }
+            else
+            {
+                printf("enter a valid choice\n");
+            }
+        } while (ans != 'A' && ans != 'B' && ans != 'C' && ans != 'D');
+    }
+    printf("Your score is : %d/%d\n", score, total * 10);
+    printf("%.2f percent accuracy\n\n", ((float)correct / total) * 100);
+    printf("Thanks for playing\n\n");
+    printf("1.Play again\n0.Return to main menu\n");
+    scanf("%d", &n);
+    if (n == 1)
+    {
+        startquiz();
+    }
+    else
+    {
+        return;
+    }
+}
+void playgame(char name[], int difficulty)
+{
+    printf("================================\n           QUIZ MASTER            \n================================\n\n");
+
+    printf("Player : %s\n", name);
+    switch (difficulty)
+    {
+    case 1:
+        printf("Difficulty: Easy\n\n");
+        break;
+
+    case 2:
+        printf("Difficulty: Medium\n\n");
+        break;
+
+    case 3:
+        printf("Difficulty: Hard\n\n");
+        break;
+    }
+    {
+        printf("================================\n           QUIZ STARTING           \n================================\n\n");
+    }
+    switch (difficulty)
+    {
+    case 1:
+        displayque(easy, 5);
+        break;
+
+    case 2:
+        displayque(medium, 5);
+        break;
+
+    case 3:
+        displayque(hard, 5);
         break;
     }
 }
