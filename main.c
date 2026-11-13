@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 typedef struct question
 {
@@ -10,8 +11,8 @@ typedef struct question
     char optd[20];
     char answer;
 } question;
-void startque(void);
-void displayque(question que[], int total);
+void startquiz(void);
+void displayque(question que[], int total, int timelimit);
 void playgame(char name[], int difficulty);
 question easy[5] =
     {
@@ -133,7 +134,7 @@ void startquiz()
     printf("================================\n");
     printf("Enter your name : ");
 
-    scanf("%s", playername);
+    scanf(" %49[^\n]", playername);
     printf("\n");
     printf("Welcome, %s choose difficulty\n\n", playername);
     printf("1. Easy\n2. Medium\n3. Hard\n4. Back to Main Menu\n");
@@ -161,69 +162,83 @@ void startquiz()
         break;
     }
 }
-void displayque(question que[], int total)
+
+void displayque(question que[], int total, int timelimit)
 {
     int i, n;
     int correct = 0;
     int score = 0;
     char ans;
+    time_t start, end;
+    double time_taken;
+
     for (i = 0; i < total; i++)
-
     {
-        do
+        printf("\n================================\n");
+        printf("Question %d/%d\n", i + 1, total);
+        printf("================================\n");
+
+        printf("%s\n\n", que[i].question);
+
+        printf("A. %s\n", que[i].opta);
+        printf("B. %s\n", que[i].optb);
+        printf("C. %s\n", que[i].optc);
+        printf("D. %s\n\n", que[i].optd);
+
+        printf("Enter answer: ");
+
+        start = time(NULL);
+
+        if (scanf(" %c", &ans) != 1)
+            return;
+
+        end = time(NULL);
+
+        time_taken = difftime(end, start);
+
+        while (getchar() != '\n');
+
+        if (time_taken >= timelimit)
         {
+            printf("Time is up! No points awarded.\n");
+            continue;
+        }
 
-            printf("\n================================\n");
-            printf("Question %d/%d\n", i + 1, total);
-            printf("================================\n");
+        if (ans >= 'a' && ans <= 'd')
+            ans = ans - 32;
 
-            printf("%s\n\n", que[i].question);
+        if (ans < 'A' || ans > 'D')
+        {
+            printf("Invalid answer! No points awarded.\n");
+            continue;
+        }
 
-            printf("A. %s\n", que[i].opta);
-            printf("B. %s\n", que[i].optb);
-            printf("C. %s\n", que[i].optc);
-            printf("D. %s\n\n", que[i].optd);
-            printf("enter answer : ");
-            scanf(" %c", &ans);
-
-            if ((ans >= 'a' && ans <= 'd') || (ans >= 'A' && ans <= 'D'))
-            {
-                if (ans >= 'a' && ans <= 'z')
-                {
-                    ans = ans - 32;
-                }
-                if (que[i].answer == ans)
-                {
-                    printf("Correct answer\n");
-                    correct++;
-                    score += 10;
-                }
-                else
-                {
-                    printf("Wrong answer\n");
-                    printf("The correct answer will be : %c\n\n", que[i].answer);
-                }
-            }
-            else
-            {
-                printf("enter a valid choice\n");
-            }
-        } while (ans != 'A' && ans != 'B' && ans != 'C' && ans != 'D');
+        if (que[i].answer == ans)
+        {
+            printf("Correct answer!\n");
+            correct++;
+            score += 10;
+        }
+        else
+        {
+            printf("Wrong answer!\n");
+            printf("Correct answer: %c\n", que[i].answer);
+        }
     }
-    printf("Your score is : %d/%d\n", score, total * 10);
-    printf("%.2f percent accuracy\n\n", ((float)correct / total) * 100);
-    printf("Thanks for playing\n\n");
-    printf("1.Play again\n0.Return to main menu\n");
+
+    printf("\nYour score is: %d/%d\n", score, total * 10);
+    printf("%.2f percent accuracy\n\n",
+           ((float)correct / total) * 100);
+
+    printf("Thanks for playing!\n");
+    printf("1. Play again\n0. Return to main menu\n");
+
     scanf("%d", &n);
+
     if (n == 1)
-    {
         startquiz();
-    }
-    else
-    {
-        return;
-    }
 }
+
 void playgame(char name[], int difficulty)
 {
     printf("================================\n           QUIZ MASTER            \n================================\n\n");
@@ -249,15 +264,15 @@ void playgame(char name[], int difficulty)
     switch (difficulty)
     {
     case 1:
-        displayque(easy, 5);
+        displayque(easy, 5, 15);
         break;
 
     case 2:
-        displayque(medium, 5);
+        displayque(medium, 5, 30);
         break;
 
     case 3:
-        displayque(hard, 5);
+        displayque(hard, 5, 60);
         break;
     }
 }
